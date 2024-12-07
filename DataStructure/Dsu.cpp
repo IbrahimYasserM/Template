@@ -1,6 +1,6 @@
-struct DSU{
+struct Dsu{
   int *p;
-  explicit DSU(int n){
+  explicit Dsu(int n){
     p = new int[n];
     while(n--) p[n] = n;
   }
