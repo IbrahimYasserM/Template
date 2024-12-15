@@ -7,6 +7,12 @@ struct Query{
   }
 };
 void Mo(){
+  Query qs[q];
+  for(int i=0;i<q;i++) {
+    std::cin >> qs[i].l >> qs[i].r;
+    qs[i].i = i;
+  }
+  std::sort(qs,qs+q);
   auto add = [&](int i){
 
   };
@@ -14,6 +20,13 @@ void Mo(){
 
   };
   auto query = [&](){
-  
+
   };
+  int l=0,r=-1;
+  for(auto &[lx, rx, i] : qs) {
+    while (rx>r) add(++r);
+    while (lx<l) add(--l);
+    while (rx<r) del(r--);
+    while (lx>l) del(l++);
+  }
 }
