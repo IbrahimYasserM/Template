@@ -1,15 +1,16 @@
 struct Trie {
 #define y 'a'
+#define B 26
     struct node {
-        node* a[26]{};
+        node* a[B]{};
         int p=0, e=0;
     };
     node* root = new node();
     static std::string convert(int x) {
         std::string s;
         while (x) {
-            s += std::to_string(x%2);
-            x /= 2;
+            s += std::to_string(x%B);
+            x /= B;
         }
         std::reverse(s.begin(), s.end());
         return s;
