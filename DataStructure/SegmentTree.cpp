@@ -1,5 +1,5 @@
-template <typename T>
 struct SegmentTree{
+  #define T int
   #define L x*2+1
   #define R x*2+2
   T *a, *b;
@@ -51,8 +51,11 @@ struct SegmentTree{
     b[R] += b[x];
     b[x] = 0;
     int m = (lx+rx)/2;
-    if(i<m) return is(i,L,lx,m);
-    return is(i,R,m,rx);
+    T ans;
+    if(i<m) ans = is(i,L,lx,m);
+    ans = is(i,R,m,rx);
+    a[x] = merge(a[L]+b[L]*(rx-lx)/2,a[R]+b[R]*(rx-lx)/2);
+    return ans;
   }
   // get range
   T get(int l, int r, int x=-1, int lx=-1, int rx=-1){
@@ -63,6 +66,7 @@ struct SegmentTree{
     b[R] += b[x];
     b[x] = 0;
     int m = (lx+rx)/2;
+    a[x] = merge(a[L]+b[L]*(rx-lx)/2,a[R]+b[R]*(rx-lx)/2);
     return merge(get(l,r,L,lx,m),get(l,r,R,m,rx));
   }
 };
