@@ -1,6 +1,6 @@
 struct Trie {
-#define y 'a'
-#define B 26
+#define y '0'
+#define B 2
     struct node {
         node* a[B]{};
         int p=0, e=0;
@@ -9,7 +9,7 @@ struct Trie {
     static std::string convert(int x) {
         std::string s;
         while (x) {
-            s += std::to_string(x%B);
+            s.push_back(static_cast<char>(x % B));
             x /= B;
         }
         std::reverse(s.begin(), s.end());
