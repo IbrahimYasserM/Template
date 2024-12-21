@@ -1,28 +1,29 @@
-struct Trie {
+struct AdvancedTrie {
 #define T int
-    static constexpr char y = 'a';
-    static constexpr char B = 26;
+    static constexpr char B = 2;
+    static constexpr char S = 32;
     struct node {
         node* a[B]{};
-        int p=0, e=0;
+        T e=0;
     };
     node* root = new node();
     static std::string convert(int x) {
         std::string s;
-        while (x) {
-            s.push_back(static_cast<char>(x % B));
+        char cnt = 0;
+        while (cnt++ < S) {
+            s.push_back(x % B);
             x /= B;
         }
         std::reverse(s.begin(), s.end());
         return s;
     }
+    
     [[nodiscard]] T* get(const std::string& s) const {
         node* x = root;
         for (const auto c : s) {
-            if (x->a[c-y] == nullptr)
-                x->a[c-y] = new node();
-            x->p++;
-            x = x->a[c-y];
+            if (x->a[c] == nullptr)
+                x->a[c] = new node();
+            x = x->a[c];
         }
         return &x->e;
     }
@@ -32,25 +33,13 @@ struct Trie {
     [[nodiscard]] int count(const std::string& s) const {
         const node* x = root;
         for (const auto c : s) {
-            if (x->a[c-y] == nullptr)
+            if (x->a[c] == nullptr)
                 return 0;
-            x = x->a[c-y];
+            x = x->a[c];
         }
         return x->e;
     }
     [[nodiscard]] int count(const int s) const {
         return count(convert(s));
-    }
-    [[nodiscard]] int prefix(const std::string& s) const {
-        const node* x = root;
-        for (const auto c : s) {
-            if (x->a[c-y] == nullptr)
-                return 0;
-            x = x->a[c-y];
-        }
-        return x->e + x->p;
-    }
-    [[nodiscard]] int prefix(const int s) const {
-        return prefix(convert(s));
     }
 };
