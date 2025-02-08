@@ -1,0 +1,13 @@
+int kmp(const std::string &t, const std::string &s){
+    int k[t.size()]{},j=0;
+    for(int i=1;i<t.size();++i){
+        while(j && t[i]!=t[j]) j = k[j-1];
+        k[i] = (t[i]==t[j]?++j:j);
+    }
+    j = 0;
+    for(char i : s) {
+        while(j && i!=t[j]) j = k[j-1];
+        if(i==t[j]) j++;
+    }
+    return j;
+}
