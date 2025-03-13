@@ -2,10 +2,9 @@ struct SparseTable{
 #define T int
     T *a[30]{};
     int *lg;
-    static T merge(const T a, const T b){
-        return a + b;
-    }
-    explicit SparseTable(const int n, const int b[]){
+    const int &(*merge)(const int &, const int &);
+    explicit SparseTable(const int n, const int b[], const int& (*func)(const T& a, const T& b)){
+        merge = func;
         lg = new int[n+1]{};
         for(int i=2;i<=n;++i)
             lg[i] = lg[i/2] + 1;
