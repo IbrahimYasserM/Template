@@ -1,72 +1,94 @@
-struct SegmentTree{
-  #define T int
-  #define L x*2+1
-  #define R x*2+2
-  T *a, *b;
-  int n=1;
-  explicit SegmentTree(int m){
-    while(n<m) n*=2;
-    a = new T[n*2]{};
-    b = new T[n*2]{};
-  }
-  T merge(T a, T b){
-    T c;
-    c = a + b;
-    return c;
-  }
-  // update index
-  void set(int i, int v, int x=-1, int lx=-1, int rx=-1){
-    if(!~x) set(i,v,0,0,n);
-    else if(rx-lx==1) a[x] = v;
-    else {
-      b[L] += b[x];
-      b[R] += b[x];
-      b[x] = 0;
-      int m = (lx+rx)/2;
-      if(i<m) set(i,v,L,lx,m);
-      else set(i,v,R,m,rx);
-      a[x] = merge(a[L]+b[L]*(rx-lx)/2,a[R]+b[R]*(rx-lx)/2);
+struct SegmentTree {
+    struct Node {
+        long long val;
+        long long lazy;
+        bool is_lazy;
+        explicit Node(long long x = 0) {
+            val = x;
+            lazy = 0;
+            is_lazy = false;
+        }
+        void change(long long x, int sz) {
+            val = x * sz;
+            lazy = x;
+            is_lazy = true;
+        }
+    };
+    int tree_size;
+    std::vector<Node> seg_data;
+
+    explicit SegTree(int n) {
+        tree_size = 1;
+        while (tree_size < n) tree_size *= 2;
+        seg_data.assign(2 * tree_size, Node());
     }
-  }
-  // update range
-  void add(int l, int r, int v, int x=-1, int lx=-1, int rx=-1){
-    if(!~x) add(l,r,v,0,0,n);
-    else if(l>=rx||r<=lx);
-    else if(r>=rx&&l<=lx) b[x] += v;
-    else {
-      b[L] += b[x];
-      b[R] += b[x];
-      b[x] = 0;
-      int m = (lx+rx)/2;
-      add(l,r,v,L,lx,m);
-      add(l,r,v,R,m,rx);
-      a[x] = merge(a[L]+b[L]*(rx-lx)/2,a[R]+b[R]*(rx-lx)/2);
+
+    static Node merge(const Node &lf, const Node & ri) {
+        Node ans = Node();
+        ans.val = lf.val + ri.val;
+        return ans;
     }
-  }
-  // get index
-  T is(int i, int x=-1, int lx=-1, int rx=-1){
-    if(!~x) return is(i,0,0,n);
-    if(rx-lx==1) return a[x] + b[x];
-    b[L] += b[x];
-    b[R] += b[x];
-    b[x] = 0;
-    int m = (lx+rx)/2;
-    T ans;
-    if(i<m) ans = is(i,L,lx,m);
-    ans = is(i,R,m,rx);
-    a[x] = merge(a[L]+b[L]*(rx-lx)/2,a[R]+b[R]*(rx-lx)/2);
-    return ans;
-  }
-  // get range
-  T get(int l, int r, int x=-1, int lx=-1, int rx=-1){
-    if(!~x) return get(l,r,0,0,n);
-    if(l>=rx||r<=lx) return 0;
-    if(r>=rx&&l<=lx) return a[x] + b[x]*(rx-lx);
-    b[L] += b[x];
-    b[R] += b[x];
-    b[x] = 0;
-    int m = (lx+rx)/2;
-    a[x] = merge(a[L]+b[L]*(rx-lx)/2,a[R]+b[R]*(rx-lx)/2);
-    return merge(get(l,r,L,lx,m),get(l,r,R,m,rx));
-  }
+
+    void propagate(int ni, int lx, int rx) {
+        if(!seg_data[ni].is_lazy || rx - lx == 1) return;
+
+        seg_data[ 2 * ni + 1].change(seg_data[ni].lazy, (rx-lx)/2);
+        seg_data[ 2 * ni + 2].change(seg_data[ni].lazy, (rx-lx)/2);
+
+        seg_data[ni].lazy = 0;
+        seg_data[ni].is_lazy = false;
+    }
+
+    void Build(std::vector<int> &arr, int ni, int lx, int rx) {
+        if(rx - lx == 1) {
+            if(lx < (int)arr.size())
+                seg_data[ni] = Node(arr[lx]);
+            return;
+        }
+        int mid = (lx + rx) / 2;
+        Build(arr, 2 * ni + 1, lx, mid);
+        Build(arr, 2 * ni + 2, mid, rx);
+
+        seg_data[ni] = merge(seg_data[2 * ni + 1], seg_data[2 * ni + 2]);
+    }
+    void Build(std::vector<int> & arr) {
+        Build(arr, 0, 0, tree_size);
+    }
+
+    Node get_range(int l, int r, int ni, int lx, int rx){
+        propagate(ni, lx, rx);
+
+        if(lx >= l && rx <= r)
+            return seg_data[ni];
+        if(rx <= l || lx >= r)
+            return Node();
+
+        int mid = (lx + rx) / 2;
+        return merge(get_range(l, r, 2 * ni + 1, lx, mid), get_range(l, r, 2 * ni + 2, mid, rx));
+    }
+    long long get_range(int l, int r) {
+        return get_range(l, r, 0, 0, tree_size).val;
+    }
+
+
+    void set(int l, int r, int v, int ni, int lx, int rx) {
+        propagate(ni, lx, rx);
+
+        if(lx >= l && rx <= r) {
+            seg_data[ni].change(v, rx-lx);
+            return;
+        }
+        if(rx <= l || lx >= r)
+            return;
+
+        int mid = (lx + rx) / 2;
+        set(l, r, v, 2 * ni + 1, lx, mid);
+        set(l, r, v, 2 * ni + 2, mid, rx);
+
+        seg_data[ni] = merge(seg_data[2 * ni + 1], seg_data[2*ni + 2]);
+    }
+
+    void set(int l, int r, int v) {
+        set(l, r, v, 0, 0, tree_size);
+    }
 };
