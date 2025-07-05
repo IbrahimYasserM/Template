@@ -17,7 +17,7 @@ struct SegmentTree {
     int tree_size;
     std::vector<Node> seg_data;
 
-    explicit SegTree(int n) {
+    explicit SegmentTree(int n) {
         tree_size = 1;
         while (tree_size < n) tree_size *= 2;
         seg_data.assign(2 * tree_size, Node());
