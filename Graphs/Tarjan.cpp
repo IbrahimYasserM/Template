@@ -18,6 +18,7 @@ void dfs(int i, std::vector<int> adj[]) {
         while (!nodes.empty()) {
             int x = nodes.top();
             nodes.pop();
+            root[x] = i;
             inStack[x] = false;
             if (x == i) break;
             components.back().push_back(x);
