@@ -1,5 +1,4 @@
 struct KuhnMatching {
-    static const int N = 500, M = 500;
     std::vector<int> mt;
     std::vector<bool> used;
     KuhnMatching(int n, int m, std::vector<int> adj[]) {
