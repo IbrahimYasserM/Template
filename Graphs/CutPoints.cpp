@@ -1,6 +1,5 @@
 bool visited[N];
 int timer, tin[N], low[N];
-std::string s[N];
 std::vector<std::string> cut_points;
 void dfs(int v, int p, std::vector<int> adj[]) {
     visited[v] = true;
