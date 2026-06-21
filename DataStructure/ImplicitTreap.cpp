@@ -11,12 +11,13 @@ struct item {
 int cnt(pitem it) {
     return it ? it->cnt : 0;
 }
+
+// at the end
 void upd(pitem it) {
-    if (it) {
-        it->cnt = cnt(it->l) + cnt(it->r) + 1;
-    }
+    if (it) it->cnt = cnt(it->l) + cnt(it->r) + 1;
 }
 
+// at the start
 void push(pitem it) {
     if (it && it->rev) {
         it->rev = false;
@@ -91,7 +92,7 @@ void output(pitem t) {
     push(t);
 
     output(t->l);
-    std::cout << t->value;
+    std::cout << t->value << ' ';
     output(t->r);
 }
 
@@ -118,3 +119,4 @@ void erase(pitem &t, int pos) {
 
     merge(t, t1, t3); //t will contain [0:pos-1] + [pos+1: n-1]
 }
+
