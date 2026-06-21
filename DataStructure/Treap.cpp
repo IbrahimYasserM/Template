@@ -32,6 +32,7 @@ void insert (pitem & t, pitem it) {
         split (t, it->key, it->l, it->r),  t = it;
     else
         insert (t->key <= it->key ? t->r : t->l, it);
+    upd(t);
 }
 
 void merge (pitem & t, pitem l, pitem r) {
@@ -52,6 +53,7 @@ void erase (pitem & t, int key) {
     }
     else
         erase (key < t->key ? t->l : t->r, key);
+    upd(t);
 }
 
 pitem unite (pitem l, pitem r) {
