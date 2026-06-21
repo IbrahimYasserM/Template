@@ -26,6 +26,7 @@ void dfs(int i, std::vector<int> adj[]) {
     }
 }
 void tarjan(int n, std::vector<int> adj[]) {
+    components.clear();
     timer = 0;
     memset(in, -1, n*sizeof(in[0]));
     for (int i=0; i<n; ++i)
