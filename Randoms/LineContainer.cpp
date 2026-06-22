@@ -1,44 +1,37 @@
-struct Line
-{
-    mutable long long k, m, p;
-    bool operator<(const Line &o) const { return k < o.k; }
-    bool operator<(long long x) const { return p < x; }
+#include <assert.h>
+typedef long long ll;
+struct Line {
+    ll k, m;
+    mutable ll p;
+    bool operator<(const Line& o) const {
+        return k < o.k;
+    }
+    bool operator<(const ll&x) const {
+        return p < x;
+    }
 };
- 
- 
-// for a line equation y = k*x+m
-// if you have multible lines and you want to query max y for some x
-// to turn this into min y for some x insert -k and -m
-struct LineContainer : std::multiset<Line, std::less<>>
-{
+
+// y = k*x + m
+struct LineContainer : std::multiset<Line, std::less<>> {
     // (for doubles, use inf = 1/.0, div(a,b) = a/b)
-    static const long long inf = LLONG_MAX;
-    static long long div(long long a, long long b)
-    { // floored division
+    const ll inf = std::numeric_limits<ll>::max();
+    ll div(ll a, ll b) { // floored division
         return a / b - ((a ^ b) < 0 && a % b);
     }
-    bool isect(iterator x, iterator y)
-    {
-        if (y == end())
-            return x->p = inf, 0;
-        if (x->k == y->k)
-            x->p = x->m > y->m ? inf : -inf;
-        else
-            x->p = div(y->m - x->m, x->k - y->k);
+    bool isect(iterator x, iterator y) {
+        if (y == end()) { x->p = inf; return false; }
+        if (x->k == y->k) x->p = x->m > y->m ? inf : -inf;
+        else x->p = div(y->m - x->m, x->k - y->k);
         return x->p >= y->p;
     }
-    void add(long long k, long long m)
-    {
+    void add(ll k, ll m) {
         auto z = insert({k, m, 0}), y = z++, x = y;
-        while (isect(y, z))
-            z = erase(z);
-        if (x != begin() && isect(--x, y))
-            isect(x, y = erase(y));
+        while (isect(y, z)) z = erase(z);
+        if (x != begin() && isect(--x, y)) isect(x, y = erase(y));
         while ((y = x) != begin() && (--x)->p >= y->p)
             isect(x, erase(y));
     }
-    long long query(long long x)
-    {
+    ll query(ll x) {
         assert(!empty());
         auto l = *lower_bound(x);
         return l.k * x + l.m;
