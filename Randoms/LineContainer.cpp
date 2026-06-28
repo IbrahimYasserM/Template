@@ -36,4 +36,7 @@ struct LineContainer : std::multiset<Line, std::less<>> {
         auto l = *lower_bound(x);
         return l.k * x + l.m;
     }
+    // to find the minimum
+    // add(-k, -m)
+    // query(x) * -1
 };
