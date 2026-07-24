@@ -10,35 +10,35 @@ struct MaxFlow {
         q.emplace(s, 1e9);
 
         while (!q.empty()) {
-            auto [x, flow] = q.front();
+            auto [x, f] = q.front();
             q.pop();
 
             for (auto ch : adj[x])
                 if (p[ch] == -1 && c[x][ch]) {
                     p[ch] = x;
-                    int new_flow = std::min(flow, c[x][ch]);
+                    int nf = std::min(f, c[x][ch]);
                     if (ch == t)
-                        return new_flow;
-                    q.emplace(ch, new_flow);
+                        return nf;
+                    q.emplace(ch, nf);
                 }
         }
         return 0;
     }
     long long max_flow(int s, int t) {
-        long long flow = 0;
+        long long f = 0;
         std::vector<int> p(n);
-        int new_flow;
-        while ((new_flow = bfs(s, t, p))) {
-            flow += new_flow;
+        int nf;
+        while ((nf = bfs(s, t, p))) {
+            f += nf;
             int x = t;
             while (x != s) {
                 int y = p[x];
-                c[y][x] -= new_flow;
-                c[x][y] += new_flow;
+                c[y][x] -= nf;
+                c[x][y] += nf;
                 x = y;
             }
         }
-        return flow;
+        return f;
     }
 
     void add_edge(int x, int y, int cap) {
