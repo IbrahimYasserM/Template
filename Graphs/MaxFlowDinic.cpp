@@ -1,4 +1,4 @@
-// O(E * V^2)
+// O(E * V^2) sometimes O(E * V)
 // if Unit network: O(E * sqrt(E)) O(E * V^(2/3))
 // if in/out degree == 1: O(E * sqrt(V))
 struct FlowEdge {
