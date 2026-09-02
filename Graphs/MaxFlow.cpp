@@ -1,3 +1,4 @@
+// O(E * F), O(V * E^2)
 struct MaxFlow {
     static const int N = ;
     std::vector<int> adj[N];
