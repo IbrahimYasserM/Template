@@ -6,9 +6,9 @@ struct FlowEdge {
     ll cap, flow = 0;
     FlowEdge(int v, int u, ll cap) : v(v), u(u), cap(cap) {}
 };
+const ll flow_inf = 1e18;
 
 struct Dinic {
-    const ll flow_inf = 1e18;
     vector<FlowEdge> edges;
     vector<vector<int>> adj;
     int n, m = 0;
@@ -47,16 +47,14 @@ struct Dinic {
     }
 
     ll dfs(int v, ll c) {
-        if (c == 0)
-            return 0;
-        if (v == t)
+        if (c == 0 || v == t)
             return c;
         for (int& cid = ptr[v]; cid < (int)adj[v].size(); cid++) {
             int id = adj[v][cid];
             int u = edges[id].u;
             if (level[v] + 1 != level[u])
                 continue;
-            long long tr = dfs(u, min(c, edges[id].cap - edges[id].flow));
+            ll tr = dfs(u, min(c, edges[id].cap - edges[id].flow));
             if (tr == 0)
                 continue;
             edges[id].flow += tr;
@@ -75,10 +73,40 @@ struct Dinic {
             if (!bfs())
                 break;
             fill(ptr.begin(), ptr.end(), 0);
-            while (ll c = dfs(s, flow_inf)) {
+            while (ll c = dfs(s, flow_inf))
                 f += c;
-            }
         }
         return f;
+    }
+
+    vector<pair<vector<int>, ll>> get_paths() {
+        vector<ll> f(m);
+        for (int i = 0; i < m; i++) f[i] = max(edges[i].flow, 0LL);
+
+        vector<pair<vector<int>, ll>> res;
+        while (true) {
+            vector<int> par(n, -1), path_edges;
+            vector<int> stk = {s};
+            par[s] = -2;
+            while (!stk.empty() && par[t] == -1) {
+                int v = stk.back(); stk.pop_back();
+                for (int id : adj[v]) {
+                    int u = edges[id].u;
+                    if (f[id] > 0 && par[u] == -1) { par[u] = id; stk.push_back(u); }
+                }
+            }
+            if (par[t] == -1) break;
+
+            ll bn = flow_inf;
+            for (int v = t; v != s; v = edges[par[v]].v) bn = min(bn, f[par[v]]);
+            vector<int> verts = {t};
+            for (int v = t; v != s; v = edges[par[v]].v) {
+                f[par[v]] -= bn;
+                verts.push_back(edges[par[v]].v);
+            }
+            reverse(verts.begin(), verts.end());
+            res.emplace_back(verts, bn);
+        }
+        return res;
     }
 };
