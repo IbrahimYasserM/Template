@@ -1,29 +1,22 @@
-#include<bits/stdc++.h>
-
-#define ll long long
-#define f first
-#define s second
-using namespace std;
-const int N = 1e2+5; //size of nodes
-
-const int inf = 1000000010;
+const ll inf = 1e16;
 struct Edge {
-    int to, cost, cap, flow, backEdge;
+    int to;
+    ll cost, cap, flow;
+    int backEdge;
 };
 struct MCMF {
     int s, t, n;
-    vector<Edge> g[N];
-    MCMF(int _s, int _t, int _n) {
-        s = _s, t = _t, n = _n+1;
-    }
-    void addEdge(int u, int v, int cost, int cap) {
+    std::vector<vector<Edge>> g;
+    MCMF(int s, int t, int n) : s(s), t(t), n(n+1), g(n+1) {}
+    void addEdge(int u, int v, ll cap, ll cost) {
         Edge e1 = { v, cost, cap, 0, (int)g[v].size() };
         Edge e2 = { u, -cost, 0, 0, (int)g[u].size() };
         g[u].push_back(e1); g[v].push_back(e2);
     }
-    pair<int, int> minCostMaxFlow() {
-        int flow = 0, cost = 0;
-        vector<int> state(n), from(n), from_edge(n), d(n);
+    pair<ll, ll> minCostMaxFlow(ll k=inf) {
+        ll flow = 0, cost = 0;
+        vector<int> state(n), from(n), from_edge(n);
+        vector<ll> d(n);
         deque<int> q;
         while (true) {
             for (int i = 0; i < n; i++)
@@ -45,38 +38,25 @@ struct MCMF {
                 }
             }
             if (d[t] == inf) break;
-            int it = t, addflow = inf;
+            ll it = t, add_flow = k, add_cost = 0;
             while (it != s) {
-                addflow = min(addflow,
+                add_flow = min(add_flow,
                               g[from[it]][from_edge[it]].cap
                               - g[from[it]][from_edge[it]].flow);
+                add_cost += g[from[it]][from_edge[it]].cost;
                 it = from[it];
             }
+            if (!add_flow) break;
+            k -= add_flow;
+            flow += add_flow;
+            cost += add_flow * add_cost;
             it = t;
             while (it != s) {
-                g[from[it]][from_edge[it]].flow += addflow;
-                g[it][g[from[it]][from_edge[it]].backEdge].flow -= addflow;
-                cost += g[from[it]][from_edge[it]].cost * addflow;
+                g[from[it]][from_edge[it]].flow += add_flow;
+                g[it][g[from[it]][from_edge[it]].backEdge].flow -= add_flow;
                 it = from[it];
             }
-            flow += addflow;
         }
         return {cost,flow};
     }
 };
-
-int main()
-{
-    ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-
-    MCMF G(0 , 3 , 3);
-    G.addEdge(0 , 1 , 3 , 2); //cost , cap
-    G.addEdge(1 , 3 , 2 , 1);
-    G.addEdge(0 , 2 , 2 , 2);
-    G.addEdge(2 , 3 , 4 , 7);
-
-    pair<ll,ll> pr = G.minCostMaxFlow(); //cost , flow
-    cout << pr.f << ' ' << pr.s << '\n';
-
-    return 0;
-}
