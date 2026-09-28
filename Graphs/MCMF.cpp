@@ -1,3 +1,5 @@
+// Worst case: O(F . V . E)
+// Typical: O(F . E)
 const ll inf = 1e16;
 struct Edge {
     int to;
