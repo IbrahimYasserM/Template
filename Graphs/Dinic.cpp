@@ -64,7 +64,7 @@ struct Dinic {
         return 0;
     }
 
-    ll flow() {
+    ll max_flow() {
         ll f = 0;
         while (true) {
             fill(level.begin(), level.end(), -1);
