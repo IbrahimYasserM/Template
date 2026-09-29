@@ -4,11 +4,11 @@
 const int mod = 1e9+7;
 matrix mul(matrix &a, matrix &b){
     int n = a.size(), m = b[0].size(), l = b.size();
-    assert(l != a[0].size());
+    assert(l == a[0].size());
     matrix res = zero(n, m);
     for(int i=0; i<n; ++i)
         for(int j=0; j<m; ++j)
-            for(int k=0; k<n; ++k)
+            for(int k=0; k<l; ++k)
                 res[i][j] = (res[i][j] + a[i][k]*b[k][j]) % mod;
     return res;
 }
