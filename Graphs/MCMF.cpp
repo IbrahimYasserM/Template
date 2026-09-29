@@ -9,13 +9,13 @@ struct Edge {
 struct MCMF {
     int s, t, n;
     std::vector<vector<Edge>> g;
-    MCMF(int s, int t, int n) : s(s), t(t), n(n+1), g(n+1) {}
-    void addEdge(int u, int v, ll cap, ll cost) {
+    MCMF(int n, int s, int t) : s(s), t(t), n(n+1), g(n+1) {}
+    void add_edge(int u, int v, ll cap, ll cost) {
         Edge e1 = { v, cost, cap, 0, (int)g[v].size() };
         Edge e2 = { u, -cost, 0, 0, (int)g[u].size() };
         g[u].push_back(e1); g[v].push_back(e2);
     }
-    pair<ll, ll> minCostMaxFlow(ll k=inf) {
+    pair<ll, ll> min_cost_max_flow(ll k=inf) {
         ll flow = 0, cost = 0;
         vector<int> state(n), from(n), from_edge(n);
         vector<ll> d(n);
