@@ -23,6 +23,7 @@ void base_case(matrix &dp){
     dp[0][0] = 0;
     dp[1][0] = 1;
 }
+// new[i] = sum over j of T[i][j] * old[j]
 void transition(matrix &T){
     T[0][0] = 0;
     T[0][1] = 1;
